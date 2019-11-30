@@ -33,6 +33,16 @@ then
   exit 1
 fi
 
+# Find all WordPress installations on the server
+WPFIND=$(find $WPROOT -maxdepth ${DEPTH} -type f -name 'wp-config.php')
+if [ -z "${WPFIND}" ]
+then
+  echo "No WordPress installations found on this server." >&2
+  exit 1
+else
+  WPDIRS=$(dirname ${WPFIND})
+fi
+
 # Test if WP-CLI is installed on the system.
 if [ ! -x ${WP} ]
 then
@@ -56,10 +66,7 @@ then
   exit 1
 fi
 
-# Find all WordPress installations on the server
-WPDIRS=$(dirname $(find ${WPROOT} -maxdepth ${DEPTH} \
-  -type f -name 'wp-config.php'))
-
+# Update all WordPress installations
 for WPDIR in ${WPDIRS}
 do
   echo "Found WordPress installation at: ${WPDIR}"
